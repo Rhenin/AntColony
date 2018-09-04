@@ -45,9 +45,10 @@ namespace TSP
         {
             //var rng = new Random();
             //int anthillOnNode = rng.Next(1, graphSize);
-            var antHill = new Anthill<int>(antCount);
+            
 
-            var node = graph.Nodes.FindByValue(3);
+            var node = graph.Nodes.FindByValue(5);           
+            var antHill = new Anthill<int>(antCount, node);
             node.Anthill = antHill;
             node.HasAntHill = true;
 

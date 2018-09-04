@@ -6,9 +6,11 @@ namespace TSP
     {
         public List<Ant<T>> Ants = new List<Ant<T>>();
 
+        public GraphNode<T> CurrentLocation { get; set; }
      
-        public Anthill(int antCount)
+        public Anthill(int antCount, GraphNode<T> currentLocation)
         {
+            CurrentLocation = currentLocation;
             CreateAnts(antCount);
         }
 
@@ -17,7 +19,7 @@ namespace TSP
         {
             for (int i = 0; i < antCount; i++)
             {
-                Ants.Add(new Ant<T>(this, i+1));
+                Ants.Add(new Ant<T>(this, i+1, CurrentLocation));
             }
         }
     }

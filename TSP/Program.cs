@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TSP
 {
@@ -20,6 +21,11 @@ namespace TSP
             var graph = Utility.GraphGenerate(graphSize);
             var anthill = Utility.AnthillGenerete(antCount, graphSize, graph);
 
+            foreach (var ant in anthill.Ants)
+            {
+                ant.Visited.Add(ant.CurrentLocation);
+                List<double> probabilities = ant.ChooseWay(ant.Visited, ant.CurrentLocation.Neighbors);
+            }
 
            
             Console.ReadLine();
