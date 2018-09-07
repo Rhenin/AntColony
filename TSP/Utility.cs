@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace TSP
 {
@@ -53,6 +56,44 @@ namespace TSP
             node.HasAntHill = true;
 
             return antHill;
+        }
+
+        public static void SaveToFileCsvOrTxt(List<string> doZapisu)
+        {
+            string fileName = null;
+            Console.WriteLine("Name a file to which you want save the data: ");
+            fileName = Console.ReadLine();
+            var stringBuilder = new StringBuilder();
+            string dataFilePath = Directory.GetCurrentDirectory() + "/" + fileName;
+            if (fileName.Contains(".txt"))
+            {
+                foreach (var element in doZapisu)
+                {
+                    stringBuilder.AppendLine(element);
+                }
+                File.WriteAllText(dataFilePath, stringBuilder.ToString());
+
+            }
+            else
+            {
+                if (fileName.Contains(".csv"))
+                {
+                    foreach (var arrayElement in doZapisu)
+                    {
+                        var newLine = String.Format("{0},{1}", arrayElement, Environment.NewLine);
+                        stringBuilder.Append(newLine);
+                        File.WriteAllText(dataFilePath, stringBuilder.ToString());
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Wrong file format, only txt and csv are supported.");
+                    Console.WriteLine("Try again");
+                    SaveToFileCsvOrTxt(doZapisu);
+                }
+            }
+
+
         }
     }
 }

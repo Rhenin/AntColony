@@ -10,22 +10,27 @@ namespace TSP
         
         private int _antValueName;
         private Anthill<T> _hill;
-        public GraphNode<T> CurrentLocation { get; set; } 
+        private ListOfNodes<T> _visited;
+        public GraphNode<T> CurrentLocation { get; set; }
+        public List<double> Probabilities { get; set; }
+        
 
         public Ant(Anthill<T> hill, int antValueName, GraphNode<T> currentLocation)
         {
             CurrentLocation = currentLocation;
             _hill = hill;
             _antValueName = antValueName;
+            _visited = new ListOfNodes<T>() {CurrentLocation};
+            Probabilities = ChooseWay(_visited, CurrentLocation.Neighbors);
         }
-        public ListOfNodes<T> Visited = new ListOfNodes<T>();
+        
 
         public List<double> ChooseWay(ListOfNodes<T> visited, ListOfNodes<T> neighboors)
         {
             List<double> probability = new List<double>();
             
 
-            const double beta = 0.5;
+            const double beta = 2;
             double sumOfAll = 0;
 
             
@@ -48,5 +53,7 @@ namespace TSP
 
             return probability;
         }
+
+        public void ChangeLocation()
     }
 }

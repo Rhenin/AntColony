@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace TSP
 {
@@ -14,20 +15,14 @@ namespace TSP
            
             Console.WriteLine("Size of graph: ");
             var graphSize = Convert.ToInt32(Console.ReadLine());
-
-
+            var graph = Utility.GraphGenerate(graphSize);                                                              
+            var anthill = Utility.AnthillGenerete(antCount, graphSize, graph);          
             
            
-            var graph = Utility.GraphGenerate(graphSize);
-            var anthill = Utility.AnthillGenerete(antCount, graphSize, graph);
+            
 
-            foreach (var ant in anthill.Ants)
-            {
-                ant.Visited.Add(ant.CurrentLocation);
-                List<double> probabilities = ant.ChooseWay(ant.Visited, ant.CurrentLocation.Neighbors);
-            }
 
-           
+
             Console.ReadLine();
 
         }
