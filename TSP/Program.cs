@@ -20,8 +20,17 @@ namespace TSP
             
            
             
+           /* foreach(var item in graph.Nodes)
+            {
+                int inverseTour;
+                for(int i = 0; i<anthill.Ants.Count; i++)
+                {
 
-
+                }
+                item.Pheromone = (1 - 0.5) * item.Pheromone + 
+           
+            }
+            */
 
             Console.ReadLine();
 

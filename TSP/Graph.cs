@@ -11,12 +11,6 @@
         }
 
 
-        //Adding nodes to the graph
-        public void AddNode(GraphNode<T> node)
-        {
-           Nodes.Add(node);
-        }
-
         public void AddNode(T value)
         {
             Nodes.Add(new GraphNode<T>(value));
@@ -27,9 +21,11 @@
         public void AddEdge(GraphNode<T> from, GraphNode<T> to, int cost)
         {
             from.Neighbors.Add(to);
+            from.Pheromone.Add(1.0);
             from.Costs.Add(cost);
 
             to.Neighbors.Add(from);
+            to.Pheromone.Add(1.0);
             to.Costs.Add(cost);
         }
 
@@ -55,6 +51,7 @@
                 var index = gNode.Neighbors.IndexOf(toRemove);
                 if (index == -1) continue;
                 gNode.Neighbors.RemoveAt(index);
+                gNode.Pheromone.RemoveAt(index);
                 gNode.Costs.RemoveAt(index);
             }
 

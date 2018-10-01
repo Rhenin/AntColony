@@ -8,9 +8,8 @@ namespace TSP
     static class Utility
     {
         public static Graph<int> GraphGenerate(int graphSize)
-        {
-            var rng = new Random();
-            //node creation
+        {         
+
             int nodeCount = 1;
             var graph = new Graph<int>();
 
@@ -21,8 +20,14 @@ namespace TSP
                     graph.AddNode(nodeCount++);
                 }
             }
+            ConnectNodes(graph, graphSize);
 
-            //node connection
+            return graph;
+        }
+
+        public static void ConnectNodes(Graph<int> graph, int graphSize)
+        {
+            var rng = new Random();
             int z = 0;
             for (int j = 0; j < graphSize; j++, z++)
             {
@@ -40,8 +45,6 @@ namespace TSP
                     graph.AddEdge(graph.Nodes[z], graph.Nodes[z + graphSize], rng.Next(1, graphSize));
                 }
             }
-
-            return graph;
         }
 
         public static Anthill<int> AnthillGenerete(int antCount, int graphSize, Graph<int> graph)
@@ -60,12 +63,11 @@ namespace TSP
 
         public static void SaveToFileCsvOrTxt(List<string> doZapisu)
         {
-            string fileName = null;
             Console.WriteLine("Name a file to which you want save the data: ");
-            fileName = Console.ReadLine();
+            var fileName = Console.ReadLine();
             var stringBuilder = new StringBuilder();
             string dataFilePath = Directory.GetCurrentDirectory() + "/" + fileName;
-            if (fileName.Contains(".txt"))
+            if (fileName != null && fileName.Contains(".txt"))
             {
                 foreach (var element in doZapisu)
                 {
@@ -76,11 +78,11 @@ namespace TSP
             }
             else
             {
-                if (fileName.Contains(".csv"))
+                if (fileName != null && fileName.Contains(".csv"))
                 {
                     foreach (var arrayElement in doZapisu)
                     {
-                        var newLine = String.Format("{0},{1}", arrayElement, Environment.NewLine);
+                        var newLine = $"{arrayElement},{Environment.NewLine}";
                         stringBuilder.Append(newLine);
                         File.WriteAllText(dataFilePath, stringBuilder.ToString());
                     }
