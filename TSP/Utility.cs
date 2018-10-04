@@ -7,19 +7,25 @@ namespace TSP
 {
     static class Utility
     {
-        public static Graph<int> GraphGenerate(int graphSize)
-        {         
+        private const double VanishRate = 0.5;
 
-            int nodeCount = 1;
+        public static Graph<int> GraphGenerate(int graphSize)
+        {
+
             var graph = new Graph<int>();
 
-            for (int j = 0; j < graphSize; j++)
-            {
-                for (int i = 0; i < graphSize; i++)
-                {
-                    graph.AddNode(nodeCount++);
-                }
+            for (int j = 0; j < graphSize * graphSize; j++)
+            {               
+                    graph.AddNode(j+1);              
             }
+
+            int edgeCount = graphSize * graphSize + (graphSize - 1) * (graphSize - 1) - 1;
+
+            for (int i = 0; i < edgeCount; i++)
+            {
+                graph.AddEdge(i+1);
+            }
+
             ConnectNodes(graph, graphSize);
 
             return graph;
@@ -27,22 +33,23 @@ namespace TSP
 
         public static void ConnectNodes(Graph<int> graph, int graphSize)
         {
-            var rng = new Random();
-            int z = 0;
-            for (int j = 0; j < graphSize; j++, z++)
+            int edgeName = 1;
+
+            for (int j = 0, nodeIndex = 0; j < graphSize; j++, nodeIndex++)
             {
                 for (int i = 0; i < graphSize - 1; i++)
                 {
-                    if (z < graphSize * graphSize - graphSize)
+                    if (nodeIndex < graphSize * graphSize - graphSize)
                     {
-                        graph.AddEdge(graph.Nodes[z], graph.Nodes[z + graphSize], rng.Next(1, graphSize));
+                        graph.InitEdge(graph.Nodes[nodeIndex], graph.Nodes[nodeIndex + graphSize], edgeName++);
                     }
-                    graph.AddEdge(graph.Nodes[z++], graph.Nodes[z], rng.Next(1, graphSize));
+
+                    graph.InitEdge(graph.Nodes[nodeIndex++], graph.Nodes[nodeIndex], edgeName++);
                 }
 
-                if (z < graphSize * graphSize - graphSize)
+                if (nodeIndex < graphSize * graphSize - graphSize)
                 {
-                    graph.AddEdge(graph.Nodes[z], graph.Nodes[z + graphSize], rng.Next(1, graphSize));
+                    graph.InitEdge(graph.Nodes[nodeIndex], graph.Nodes[nodeIndex + graphSize], edgeName++);
                 }
             }
         }
@@ -51,51 +58,61 @@ namespace TSP
         {
             //var rng = new Random();
             //int anthillOnNode = rng.Next(1, graphSize);
-            
 
-            var node = graph.Nodes.FindByValue(5);           
+
+            var node = graph.Nodes.FindByValue(5);
             var antHill = new Anthill<int>(antCount, node);
+            graph.Anthill = antHill;
             node.Anthill = antHill;
             node.HasAntHill = true;
-
+          
             return antHill;
         }
 
-        public static void SaveToFileCsvOrTxt(List<string> doZapisu)
+        public static void GlobalUpdateRule(Graph<int> graph)
+        {
+            foreach (var item in graph.Edges)
+            {
+                item.Pheromone = (1 - VanishRate) * item.Pheromone;
+                foreach (var ant in graph.Anthill.Ants)
+                {
+                    if (ant.Visited.Contains(item))
+                    {
+                        item.Pheromone += (1 / ant.LengthOfRoad);
+                    }
+                }
+            }
+        }
+
+        private static void SaveAsCsv(List<string> doZapisu)
         {
             Console.WriteLine("Name a file to which you want save the data: ");
             var fileName = Console.ReadLine();
             var stringBuilder = new StringBuilder();
-            string dataFilePath = Directory.GetCurrentDirectory() + "/" + fileName;
-            if (fileName != null && fileName.Contains(".txt"))
+            var dataFilePath = Directory.GetCurrentDirectory() + "/" + fileName + ".csv";
+
+            foreach (var arrayElement in doZapisu)
             {
-                foreach (var element in doZapisu)
-                {
-                    stringBuilder.AppendLine(element);
-                }
+                var newLine = $"{arrayElement},{Environment.NewLine}";
+                stringBuilder.Append(newLine);
                 File.WriteAllText(dataFilePath, stringBuilder.ToString());
-
             }
-            else
+
+        }
+
+        private static void SaveAsTxt(List<string> doZapisu)
+        {
+            Console.WriteLine("Name a file to which you want save the data: ");
+            var fileName = Console.ReadLine();
+            var stringBuilder = new StringBuilder();
+            var dataFilePath = Directory.GetCurrentDirectory() + "/" + fileName + ".txt";
+
+            foreach (var element in doZapisu)
             {
-                if (fileName != null && fileName.Contains(".csv"))
-                {
-                    foreach (var arrayElement in doZapisu)
-                    {
-                        var newLine = $"{arrayElement},{Environment.NewLine}";
-                        stringBuilder.Append(newLine);
-                        File.WriteAllText(dataFilePath, stringBuilder.ToString());
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Wrong file format, only txt and csv are supported.");
-                    Console.WriteLine("Try again");
-                    SaveToFileCsvOrTxt(doZapisu);
-                }
+                stringBuilder.AppendLine(element);
             }
 
-
+            File.WriteAllText(dataFilePath, stringBuilder.ToString());
         }
     }
 }

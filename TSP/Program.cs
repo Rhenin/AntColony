@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace TSP
 {
@@ -10,27 +8,24 @@ namespace TSP
         {
             //init input
             
+            int graphSize;
+
             Console.WriteLine("Number of Ants: ");
             var antCount = Convert.ToInt32(Console.ReadLine());
            
-            Console.WriteLine("Size of graph: ");
-            var graphSize = Convert.ToInt32(Console.ReadLine());
-            var graph = Utility.GraphGenerate(graphSize);                                                              
-            var anthill = Utility.AnthillGenerete(antCount, graphSize, graph);          
+            Console.WriteLine("Size of graph(Must be 3 or greater): ");
             
-           
-            
-           /* foreach(var item in graph.Nodes)
+            do
             {
-                int inverseTour;
-                for(int i = 0; i<anthill.Ants.Count; i++)
-                {
-
-                }
-                item.Pheromone = (1 - 0.5) * item.Pheromone + 
+                graphSize = Convert.ToInt32(Console.ReadLine());
+            } while (graphSize < 3);
+            var graph = Utility.GraphGenerate(graphSize);                                                              
+            var anthill = Utility.AnthillGenerete(antCount, graphSize, graph);
+                     
            
-            }
-            */
+         
+            
+            
 
             Console.ReadLine();
 

@@ -11,7 +11,7 @@ namespace TSP
         public GraphNode(T value)
         {
             Value = value;
-            Neighbors = new ListOfNodes<T>();
+            Neighbors = new ListOfEdges<T>();
         }
 
         //properties
@@ -24,10 +24,9 @@ namespace TSP
 
         public Anthill<T> Anthill { get; set; }
 
-        public ListOfNodes<T> Neighbors { get; set; }
+        public ListOfEdges<T> Neighbors { get; set; }
 
-        public List<int> Costs = new List<int>();
-        public List<double> Pheromone = new List<double>();
+        
 
     }
 }

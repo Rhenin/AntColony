@@ -1,13 +1,16 @@
-﻿namespace TSP
+﻿using System;
+
+namespace TSP
 {
     public class Graph<T>
     {
         //graph init
-        public Graph() : this(null) { }
+        public Graph() : this(null, null) { }
 
-        public Graph(ListOfNodes<T> nodeSet)
+        public Graph(ListOfNodes<T> nodeSet, ListOfEdges<T> edgeSet)
         {
             Nodes = nodeSet ?? new ListOfNodes<T>();
+            Edges = edgeSet ?? new ListOfEdges<T>();
         }
 
 
@@ -16,51 +19,31 @@
             Nodes.Add(new GraphNode<T>(value));
         }
 
+        public void AddEdge(T value)
+        {
+            Edges.Add(new Edge<T>(value));
+        }
+
 
         //Connecting nodes to each other
-        public void AddEdge(GraphNode<T> from, GraphNode<T> to, int cost)
+        public void InitEdge(GraphNode<T> from, GraphNode<T> to, T value)
         {
-            from.Neighbors.Add(to);
-            from.Pheromone.Add(1.0);
-            from.Costs.Add(cost);
+            var rng = new Random();
+            var currentEdge = Edges.FindByValue(value);
 
-            to.Neighbors.Add(from);
-            to.Pheromone.Add(1.0);
-            to.Costs.Add(cost);
+            from.Neighbors.Add(currentEdge);
+            to.Neighbors.Add(currentEdge);
+
+            currentEdge.FirstNode = from;
+            currentEdge.SecondNode = to;
+            currentEdge.Cost = rng.Next(1, 10);     
         }
-
-        //search for node with set value
-        public bool Contains(T value)
-        {
-            return Nodes.FindByValue(value) != null;
-
-        }
-
-        //removing node from graph
-        public bool Remove(T value)
-        {
-            GraphNode<T> toRemove =  Nodes.FindByValue(value);
-            if (toRemove == null)
-                return false;
-
-            Nodes.Remove(toRemove);
-
-            foreach (var node in Nodes)
-            {
-                var gNode = node;
-                var index = gNode.Neighbors.IndexOf(toRemove);
-                if (index == -1) continue;
-                gNode.Neighbors.RemoveAt(index);
-                gNode.Pheromone.RemoveAt(index);
-                gNode.Costs.RemoveAt(index);
-            }
-
-            return true;
-        }
+   
 
         //graph properties 
         public ListOfNodes<T> Nodes { get; }
-
+        public ListOfEdges<T> Edges { get; set; }
+        public Anthill<T> Anthill { get; set; }
         public int Count => Nodes.Count;
     }
 }

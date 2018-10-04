@@ -8,11 +8,11 @@ namespace TSP
     public class Ant<T>
     {
         
-        private int _antValueName;
-        private Anthill<T> _hill;
-        public ListOfNodes<T> Visited;
+        private readonly int _antValueName;
+        private readonly Anthill<T> _hill;
+        public ListOfEdges<T> Visited;
 
-        public int LengthOfRoad { get; set; }
+        public double LengthOfRoad { get; set; }
         public GraphNode<T> CurrentLocation { get; set; }
         public List<double> Probabilities { get; set; }
         
@@ -22,12 +22,12 @@ namespace TSP
             CurrentLocation = currentLocation;
             _hill = hill;
             _antValueName = antValueName;
-            Visited = new ListOfNodes<T> {CurrentLocation};
-            Probabilities = ChooseWay(Visited, CurrentLocation.Neighbors);
+            Visited = new ListOfEdges<T>();
+            Probabilities = ChooseWay();
         }
         
 
-        public List<double> ChooseWay(ListOfNodes<T> visited, ListOfNodes<T> neighboors)
+        public List<double> ChooseWay()
         {
             var probability = new List<double>();
 
@@ -35,23 +35,20 @@ namespace TSP
             double sumOfAll = 0;
 
 
-            for(var i = 0; i < neighboors.Count; i++)
-            { 
-                if (visited.Contains(neighboors[i])) continue;           
-
-                sumOfAll += Convert.ToDouble(CurrentLocation.Pheromone[i]) * 
-                            Math.Pow(1/Convert.ToDouble(CurrentLocation.Costs[i]), beta);                
+            foreach (var itemEdge in CurrentLocation.Neighbors)
+            {
+                if (Visited.Contains(itemEdge)) continue;           
+                sumOfAll += Convert.ToDouble(itemEdge.Pheromone) * 
+                            Math.Pow(1/Convert.ToDouble(itemEdge.Cost), beta);
             }
 
-            for (var i = 0; i < neighboors.Count; i++)
+            foreach (var itemEdge in CurrentLocation.Neighbors)
             {
-                if (visited.Contains(neighboors[i])) continue;
-
-                var singleProb = (Convert.ToDouble(CurrentLocation.Pheromone[i]) * 
-                                  Math.Pow(1 / Convert.ToDouble(CurrentLocation.Costs[i]), beta)) / sumOfAll;
+                if (Visited.Contains(itemEdge)) continue;
+                var singleProb = (Convert.ToDouble(itemEdge.Pheromone) * 
+                                  Math.Pow(1 / Convert.ToDouble(itemEdge.Cost), beta)) / sumOfAll;
 
                 probability.Add(singleProb);
-
             }
 
             return probability;
