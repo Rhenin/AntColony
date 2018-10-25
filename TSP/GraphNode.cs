@@ -17,7 +17,7 @@ namespace TSP
         //properties
         public T Value { get; set; }
 
-        public int Food { get; set; }
+        public bool Food { get; set; }
     
 
         public bool HasAntHill = false;

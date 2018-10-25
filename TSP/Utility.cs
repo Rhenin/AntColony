@@ -60,7 +60,7 @@ namespace TSP
             //int anthillOnNode = rng.Next(1, graphSize);
 
 
-            var node = graph.Nodes.FindByValue(5);
+            var node = graph.Nodes.FindByValue(1);
             var antHill = new Anthill<int>(antCount, node);
             graph.Anthill = antHill;
             node.Anthill = antHill;

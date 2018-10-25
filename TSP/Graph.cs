@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 
 namespace TSP
 {
@@ -28,7 +29,7 @@ namespace TSP
         //Connecting nodes to each other
         public void InitEdge(GraphNode<T> from, GraphNode<T> to, T value)
         {
-            var rng = new Random();
+            
             var currentEdge = Edges.FindByValue(value);
 
             from.Neighbors.Add(currentEdge);
@@ -36,7 +37,8 @@ namespace TSP
 
             currentEdge.FirstNode = from;
             currentEdge.SecondNode = to;
-            currentEdge.Cost = rng.Next(1, 10);     
+            currentEdge.Cost = _random.Next(1, 10);
+           
         }
    
 
@@ -45,5 +47,6 @@ namespace TSP
         public ListOfEdges<T> Edges { get; set; }
         public Anthill<T> Anthill { get; set; }
         public int Count => Nodes.Count;
+        private readonly Random _random = new Random();
     }
 }

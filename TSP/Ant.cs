@@ -15,6 +15,7 @@ namespace TSP
         public double LengthOfRoad { get; set; }
         public GraphNode<T> CurrentLocation { get; set; }
         public List<double> Probabilities { get; set; }
+        public bool FoundFood { get; set; } = false;
         
 
         public Ant(Anthill<T> hill, int antValueName, GraphNode<T> currentLocation)
@@ -23,7 +24,6 @@ namespace TSP
             _hill = hill;
             _antValueName = antValueName;
             Visited = new ListOfEdges<T>();
-            Probabilities = ChooseWay();
         }
         
 
@@ -44,7 +44,11 @@ namespace TSP
 
             foreach (var itemEdge in CurrentLocation.Neighbors)
             {
-                if (Visited.Contains(itemEdge)) continue;
+                if (Visited.Contains(itemEdge))
+                {
+                    probability.Add(0);
+                    continue;
+                }
                 var singleProb = (Convert.ToDouble(itemEdge.Pheromone) * 
                                   Math.Pow(1 / Convert.ToDouble(itemEdge.Cost), beta)) / sumOfAll;
 
@@ -54,10 +58,6 @@ namespace TSP
             return probability;
         }
 
-       
-        public void ChangeLocation(List<double> probabilities)
-        {
-          
-        }
+               
     }
 }
