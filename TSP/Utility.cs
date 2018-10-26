@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace TSP
 {
     static class Utility
     {
-        private const double VanishRate = 0.5;
+        
 
         public static Graph<int> GraphGenerate(int graphSize)
         {
@@ -60,7 +61,7 @@ namespace TSP
             //int anthillOnNode = rng.Next(1, graphSize);
 
 
-            var node = graph.Nodes.FindByValue(1);
+            var node = graph.Nodes.FindByValue(6);
             var antHill = new Anthill<int>(antCount, node);
             graph.Anthill = antHill;
             node.Anthill = antHill;
@@ -71,11 +72,14 @@ namespace TSP
 
         public static void GlobalUpdateRule(Graph<int> graph)
         {
+            const double vanishRate = 0.5;
             foreach (var item in graph.Edges)
             {
-                item.Pheromone = (1 - VanishRate) * item.Pheromone;
+                item.Pheromone = (1 - vanishRate) * item.Pheromone;
                 foreach (var ant in graph.Anthill.Ants)
                 {
+                    if (ant.FoundFood == false) continue;
+                    
                     if (ant.Visited.Contains(item))
                     {
                         item.Pheromone += (1 / ant.LengthOfRoad);

@@ -23,9 +23,9 @@ namespace TSP
             } while (graphSize < 3);
             var graph = Utility.GraphGenerate(graphSize);                                                              
             var anthill = Utility.AnthillGenerete(antCount, graphSize, graph);
-            graph.Nodes.FindByValue(7).Food = true;
-            graph.Nodes.FindByValue(17).Food = true;
-            graph.Nodes.FindByValue(25).Food = true;
+
+            graph.Nodes.FindByValue(30).Food = true;
+            graph.Nodes.FindByValue(36).Food = true;
 
             var random = new Random();
             var foundWay = false;
@@ -36,6 +36,7 @@ namespace TSP
                 foreach (var ant in anthill.Ants)
                 {
                     ant.Probabilities = ant.ChooseWay();
+
                     do
                     {
                         var rollTheBones = random.NextDouble();
@@ -59,10 +60,12 @@ namespace TSP
                         foundWay = false;
                         probabilitySpace = 0;
 
-                    }while(ant.FoundFood == false || !ant.Probabilities.Any(p => p > 0));
+                    } while(ant.FoundFood == false && ant.Probabilities.Any(p => p > 0));
                     ant.CurrentLocation = anthill.CurrentLocation;
 
+
                 }
+             
             Utility.GlobalUpdateRule(graph);
             }
             
