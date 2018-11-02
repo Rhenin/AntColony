@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace TSP
 {
@@ -10,24 +11,29 @@ namespace TSP
         
         private readonly int _antValueName;
         private readonly Anthill<T> _hill;
+        private readonly Random _random;
+
         public ListOfEdges<T> Visited;
 
         public double LengthOfRoad { get; set; }
         public GraphNode<T> CurrentLocation { get; set; }
         public List<double> Probabilities { get; set; }
-        public bool FoundFood { get; set; } = false;
-        
+        public bool FoundFood { get; set; }
+        public bool FoundWay { get; set; }
 
-        public Ant(Anthill<T> hill, int antValueName, GraphNode<T> currentLocation)
+
+        public Ant(Anthill<T> hill, int antValueName)
         {
-            CurrentLocation = currentLocation;
             _hill = hill;
+            CurrentLocation = hill.CurrentLocation;
+            
             _antValueName = antValueName;
             Visited = new ListOfEdges<T>();
+            _random = new Random(_antValueName);
         }
         
 
-        public List<double> ChooseWay()
+        private List<double> FindWay()
         {
             var probability = new List<double>();
 
@@ -58,6 +64,41 @@ namespace TSP
             return probability;
         }
 
-               
+        public bool Wander()
+        {
+            
+            Probabilities = FindWay();
+            do
+            {
+                ChooseWay();
+            } while (CurrentLocation.Food == false && Probabilities.Any(p => p > 0));
+            CurrentLocation = _hill.CurrentLocation;
+
+            return FoundFood;
+        }
+
+        private void ChooseWay()
+        {
+            double probabilitySpace = 0;
+            var rollTheBones = _random.NextDouble();
+            for (var j = 0; j < Probabilities.Count; j++)
+            {
+                if (FoundWay) break;
+                probabilitySpace += Probabilities[j];
+                if (!(rollTheBones <= probabilitySpace)) continue;
+                FoundWay = true;
+                ChangeLocation(j);
+            }
+        }
+        private void ChangeLocation(int iterator)
+        {
+            Visited.Add(CurrentLocation.Neighbors[iterator]);
+            LengthOfRoad += CurrentLocation.Neighbors[iterator].Cost;
+            CurrentLocation = CurrentLocation == CurrentLocation.Neighbors[iterator].FirstNode
+                ? CurrentLocation.Neighbors[iterator].SecondNode
+                : CurrentLocation.Neighbors[iterator].FirstNode;
+            Probabilities = FindWay();
+        }
+
     }
 }

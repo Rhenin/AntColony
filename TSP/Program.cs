@@ -27,50 +27,18 @@ namespace TSP
             graph.Nodes.FindByValue(30).Food = true;
             graph.Nodes.FindByValue(36).Food = true;
 
-            var random = new Random();
-            var foundWay = false;
-            double probabilitySpace = 0;
+
+            
             
             for (var i = 0; i < 10; i++)
             {
                 foreach (var ant in anthill.Ants)
                 {
-                    ant.Probabilities = ant.ChooseWay();
-
-                    do
-                    {
-                        var rollTheBones = random.NextDouble();
-                        for (var j = 0; j < ant.Probabilities.Count; j++)
-                        {
-                            if (foundWay) break;
-                            probabilitySpace += ant.Probabilities[j];
-                            if (!(rollTheBones <= probabilitySpace)) continue;
-                            foundWay = true;
-                            ant.Visited.Add(ant.CurrentLocation.Neighbors[j]);
-                            ant.LengthOfRoad += ant.CurrentLocation.Neighbors[j].Cost;
-                            ant.CurrentLocation = ant.CurrentLocation == ant.CurrentLocation.Neighbors[j].FirstNode
-                                ? ant.CurrentLocation.Neighbors[j].SecondNode
-                                : ant.CurrentLocation.Neighbors[j].FirstNode;
-                            ant.Probabilities = ant.ChooseWay();
-                            if (ant.CurrentLocation.Food)
-                                ant.FoundFood = true;
-
-                        }
-
-                        foundWay = false;
-                        probabilitySpace = 0;
-
-                    } while(ant.FoundFood == false && ant.Probabilities.Any(p => p > 0));
-                    ant.CurrentLocation = anthill.CurrentLocation;
-
-
-                }
-             
+                        ant.Wander();
+                }     
+                
             Utility.GlobalUpdateRule(graph);
             }
-            
-            
-            
 
             Console.ReadLine();
 

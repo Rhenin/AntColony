@@ -8,7 +8,6 @@ namespace TSP
 {
     static class Utility
     {
-        
 
         public static Graph<int> GraphGenerate(int graphSize)
         {
@@ -102,21 +101,6 @@ namespace TSP
                 File.WriteAllText(dataFilePath, stringBuilder.ToString());
             }
 
-        }
-
-        private static void SaveAsTxt(List<string> doZapisu)
-        {
-            Console.WriteLine("Name a file to which you want save the data: ");
-            var fileName = Console.ReadLine();
-            var stringBuilder = new StringBuilder();
-            var dataFilePath = Directory.GetCurrentDirectory() + "/" + fileName + ".txt";
-
-            foreach (var element in doZapisu)
-            {
-                stringBuilder.AppendLine(element);
-            }
-
-            File.WriteAllText(dataFilePath, stringBuilder.ToString());
         }
     }
 }
