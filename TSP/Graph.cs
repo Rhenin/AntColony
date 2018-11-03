@@ -1,52 +1,90 @@
 ﻿using System;
-using System.Dynamic;
 
 namespace TSP
 {
-    public class Graph<T>
+    public class Graph
     {
-        //graph init
-        public Graph() : this(null, null) { }
-
-        public Graph(ListOfNodes<T> nodeSet, ListOfEdges<T> edgeSet)
+        private readonly int _graphSize;
+        private readonly Random _random = new Random();
+        private readonly ListOfNodes _nodes;
+        private readonly ListOfEdges _edges;
+        public Anthill Anthill { get; set; }
+        public Graph(int size)
         {
-            Nodes = nodeSet ?? new ListOfNodes<T>();
-            Edges = edgeSet ?? new ListOfEdges<T>();
+            _nodes = new ListOfNodes();
+            _edges = new ListOfEdges();
+            _graphSize = size;
+            GraphGenerate();
+            _nodes.FindByValue(30).Food = true;
+            _nodes.FindByValue(36).Food = true;
         }
-
-
-        public void AddNode(T value)
+        private void AddNode(int value)
         {
-            Nodes.Add(new GraphNode<T>(value));
+            _nodes.Add(new GraphNode(value));
         }
-
-        public void AddEdge(T value)
+        private void AddEdge(int value)
         {
-            Edges.Add(new Edge<T>(value));
+            _edges.Add(new Edge(value));
         }
-
-
-        //Connecting nodes to each other
-        public void InitEdge(GraphNode<T> from, GraphNode<T> to, T value)
+        private void InitEdge(GraphNode from, GraphNode to, int value)
         {
-            
-            var currentEdge = Edges.FindByValue(value);
-
+            var currentEdge = _edges.FindByValue(value);
             from.Neighbors.Add(currentEdge);
             to.Neighbors.Add(currentEdge);
-
             currentEdge.FirstNode = from;
             currentEdge.SecondNode = to;
             currentEdge.Cost = _random.Next(1, 10);
-           
         }
-   
+        private void GraphGenerate()
+        {         
+            for (int j = 0; j < _graphSize * _graphSize; j++)
+            {
+                AddNode(j + 1);
+            }
+            int edgeCount = _graphSize * _graphSize + (_graphSize - 1) * (_graphSize - 1) - 1;
+            for (int i = 0; i < edgeCount; i++)
+            {
+                AddEdge(i + 1);
+            }
+            ConnectNodes();
+        }
+        private void ConnectNodes()
+        {
+            int edgeName = 1;
+            for (int j = 0, nodeIndex = 0; j < _graphSize; j++, nodeIndex++)
+            {
+                for (int i = 0; i < _graphSize - 1; i++)
+                {
+                    if (nodeIndex < _graphSize * _graphSize - _graphSize)
+                    {
+                        InitEdge(_nodes[nodeIndex], _nodes[nodeIndex + _graphSize], edgeName++);
+                    }
 
-        //graph properties 
-        public ListOfNodes<T> Nodes { get; }
-        public ListOfEdges<T> Edges { get; set; }
-        public Anthill<T> Anthill { get; set; }
-        public int Count => Nodes.Count;
-        private readonly Random _random = new Random();
+                    InitEdge(_nodes[nodeIndex++], _nodes[nodeIndex], edgeName++);
+                }
+                if (nodeIndex < _graphSize * _graphSize - _graphSize)
+                {
+                    InitEdge(_nodes[nodeIndex], _nodes[nodeIndex + _graphSize], edgeName++);
+                }
+            }
+        }
+        public void GlobalUpdateRule()
+        {
+            const double vanishRate = 0.5;
+            foreach (var item in _edges)
+            {
+                item.Pheromone = (1 - vanishRate) * item.Pheromone;
+                foreach (var ant in Anthill.Ants)
+                {
+                    ant.UpdatePheromone(item);
+                }
+            }
+        }
+        public Anthill AnthillGenerate(int antCount)
+        {
+            //int anthillOnNode = rng.Next(1, graphSize);
+            Anthill = new Anthill(antCount, _nodes.FindByValue(6));
+            return Anthill;
+        }
     }
 }

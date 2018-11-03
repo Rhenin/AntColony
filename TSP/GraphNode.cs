@@ -1,32 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace TSP
 {
     [DebuggerDisplay("Node number: {" + nameof(Value) + "}")]
-    public class GraphNode<T>
+    public class GraphNode
     {
-        //ctors of graphNode
-
-        public GraphNode(T value)
+        public GraphNode(int value)
         {
             Value = value;
-            Neighbors = new ListOfEdges<T>();
+            Neighbors = new ListOfEdges();
         }
-
-        //properties
-        public T Value { get; set; }
-
+        public int Value { get; set; }
         public bool Food { get; set; }
-    
-
-        public bool HasAntHill = false;
-
-        public Anthill<T> Anthill { get; set; }
-
-        public ListOfEdges<T> Neighbors { get; set; }
-
-        
-
+        public Anthill Anthill { get; set; }
+        public ListOfEdges Neighbors { get; set; }
     }
 }

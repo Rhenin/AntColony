@@ -3,18 +3,18 @@
 namespace TSP
 {
     [DebuggerDisplay("Edge number: {" + nameof(IdName) + "}")]
-    public class Edge<T>
+    public class Edge
     {
-        public Edge(T value)
+        public Edge(int value)
         {
             IdName = value;
             Pheromone = 1;
         }
-        public T IdName { get; set; }
+        public int IdName { get; set; }
         public double Pheromone { get; set; }
         public int Cost { get; set; }
-        public GraphNode<T> FirstNode { get; set; }
-        public GraphNode<T> SecondNode { get; set; }
+        public GraphNode FirstNode { get; set; }
+        public GraphNode SecondNode { get; set; }
 
     }
 }

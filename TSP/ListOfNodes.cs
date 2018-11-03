@@ -4,9 +4,9 @@ using System.Linq;
 namespace TSP
 {
     //Collection for nodes
-    public class ListOfNodes<T> : Collection<GraphNode<T>>
+    public class ListOfNodes : Collection<GraphNode>
     { 
-        public GraphNode<T> FindByValue(T value)
+        public GraphNode FindByValue(int value)
         {
             return Items.FirstOrDefault(node => node.Value.Equals(value));
         }

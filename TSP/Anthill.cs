@@ -2,29 +2,23 @@
 
 namespace TSP
 {
-    public class Anthill<T>
+    public class Anthill
     {
-
-        public List<Ant<T>> Ants = new List<Ant<T>>();
-
-        public GraphNode<T> CurrentLocation { get; set; }
-     
-        public Anthill(int antCount, GraphNode<T> currentLocation)
+        public List<Ant> Ants = new List<Ant>();
+        public GraphNode CurrentLocation { get; set; }  
+        public Anthill(int antCount, GraphNode currentLocation)
         {
             CurrentLocation = currentLocation;
             CreateAnts(antCount);
+            CurrentLocation.Anthill = this;
         }
-
-        //creating ants
         public void CreateAnts(int antCount)
         {
             for (int i = 0; i < antCount; i++)
             {
-                Ants.Add(new Ant<T>(this, i+1));
+                Ants.Add(new Ant(this, i+1));
             }
-        }
-
-        
+        }        
     }
 }
 

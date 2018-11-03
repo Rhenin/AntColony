@@ -6,33 +6,72 @@ using System.Linq;
 namespace TSP
 {
     [DebuggerDisplay("Ant number: {" + nameof(_antValueName) + "}")]
-    public class Ant<T>
-    {
-        
+    public class Ant
+    {       
         private readonly int _antValueName;
-        private readonly Anthill<T> _hill;
+        private readonly Anthill _hill;
         private readonly Random _random;
-
-        public ListOfEdges<T> Visited;
-
-        public double LengthOfRoad { get; set; }
-        public GraphNode<T> CurrentLocation { get; set; }
-        public List<double> Probabilities { get; set; }
-        public bool FoundFood { get; set; }
-        public bool FoundWay { get; set; }
-
-
-        public Ant(Anthill<T> hill, int antValueName)
+        private readonly ListOfEdges _visited;
+        private bool _foundFood;
+        private double _lengthOfRoad;
+        private GraphNode _currentLocation;
+        private List<double> _probabilities;   
+        public Ant(Anthill hill, int antValueName)
         {
             _hill = hill;
-            CurrentLocation = hill.CurrentLocation;
-            
+            _currentLocation = hill.CurrentLocation;           
             _antValueName = antValueName;
-            Visited = new ListOfEdges<T>();
+            _visited = new ListOfEdges();
             _random = new Random(_antValueName);
         }
-        
+        public void ResetAnt()
+        {
+            _visited.Clear();
+            _foundFood = false;
+            _lengthOfRoad = 0;
+            _currentLocation = _hill.CurrentLocation;
+        }
+        public void UpdatePheromone(Edge item)
+        {
+            if (_foundFood == false) return;
 
+            if (_visited.Contains(item))
+            {
+                item.Pheromone += (1 / _lengthOfRoad);
+            }
+        }
+        public void Wander()
+        {   
+            _probabilities = FindWay();
+            do
+            {
+                ChooseWay();
+                if (_currentLocation.Food)
+                    _foundFood = true;
+
+            } while (!_foundFood && _probabilities.Any(p => p > 0));
+        }
+        private void ChooseWay()
+        {
+            double probabilitySpace = 0;
+            var rollTheBones = _random.NextDouble();
+            for (var j = 0; j < _probabilities.Count; j++)
+            {
+                probabilitySpace += _probabilities[j];
+                if (!(rollTheBones < probabilitySpace)) continue;
+                ChangeLocation(j);
+                break;
+            }            
+        }
+        private void ChangeLocation(int iterator)
+        {
+            _visited.Add(_currentLocation.Neighbors[iterator]);
+            _lengthOfRoad += _currentLocation.Neighbors[iterator].Cost;
+            _currentLocation = _currentLocation == _currentLocation.Neighbors[iterator].FirstNode
+                ? _currentLocation.Neighbors[iterator].SecondNode
+                : _currentLocation.Neighbors[iterator].FirstNode;
+            _probabilities = FindWay();
+        }
         private List<double> FindWay()
         {
             var probability = new List<double>();
@@ -41,21 +80,21 @@ namespace TSP
             double sumOfAll = 0;
 
 
-            foreach (var itemEdge in CurrentLocation.Neighbors)
+            foreach (var itemEdge in _currentLocation.Neighbors)
             {
-                if (Visited.Contains(itemEdge)) continue;           
-                sumOfAll += Convert.ToDouble(itemEdge.Pheromone) * 
-                            Math.Pow(1/Convert.ToDouble(itemEdge.Cost), beta);
+                if (_visited.Contains(itemEdge)) continue;
+                sumOfAll += Convert.ToDouble(itemEdge.Pheromone) *
+                            Math.Pow(1 / Convert.ToDouble(itemEdge.Cost), beta);
             }
 
-            foreach (var itemEdge in CurrentLocation.Neighbors)
+            foreach (var itemEdge in _currentLocation.Neighbors)
             {
-                if (Visited.Contains(itemEdge))
+                if (_visited.Contains(itemEdge))
                 {
                     probability.Add(0);
                     continue;
                 }
-                var singleProb = (Convert.ToDouble(itemEdge.Pheromone) * 
+                var singleProb = (Convert.ToDouble(itemEdge.Pheromone) *
                                   Math.Pow(1 / Convert.ToDouble(itemEdge.Cost), beta)) / sumOfAll;
 
                 probability.Add(singleProb);
@@ -63,42 +102,5 @@ namespace TSP
 
             return probability;
         }
-
-        public bool Wander()
-        {
-            
-            Probabilities = FindWay();
-            do
-            {
-                ChooseWay();
-            } while (CurrentLocation.Food == false && Probabilities.Any(p => p > 0));
-            CurrentLocation = _hill.CurrentLocation;
-
-            return FoundFood;
-        }
-
-        private void ChooseWay()
-        {
-            double probabilitySpace = 0;
-            var rollTheBones = _random.NextDouble();
-            for (var j = 0; j < Probabilities.Count; j++)
-            {
-                if (FoundWay) break;
-                probabilitySpace += Probabilities[j];
-                if (!(rollTheBones <= probabilitySpace)) continue;
-                FoundWay = true;
-                ChangeLocation(j);
-            }
-        }
-        private void ChangeLocation(int iterator)
-        {
-            Visited.Add(CurrentLocation.Neighbors[iterator]);
-            LengthOfRoad += CurrentLocation.Neighbors[iterator].Cost;
-            CurrentLocation = CurrentLocation == CurrentLocation.Neighbors[iterator].FirstNode
-                ? CurrentLocation.Neighbors[iterator].SecondNode
-                : CurrentLocation.Neighbors[iterator].FirstNode;
-            Probabilities = FindWay();
-        }
-
     }
 }

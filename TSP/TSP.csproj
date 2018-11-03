@@ -46,7 +46,6 @@
     <Compile Include="Anthill.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="ListOfEdges.cs" />
-    <Compile Include="Utility.cs" />
     <Compile Include="ListOfNodes.cs" />
     <Compile Include="GraphNode.cs" />
     <Compile Include="Graph.cs" />

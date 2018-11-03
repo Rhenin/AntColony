@@ -3,12 +3,11 @@ using System.Linq;
 
 namespace TSP
 {
-    public class ListOfEdges<T> : Collection<Edge<T>>
+    public class ListOfEdges : Collection<Edge>
     {
-            public Edge<T> FindByValue(T value)
+            public Edge FindByValue(int value)
             {
                 return Items.FirstOrDefault(edge => edge.IdName.Equals(value));
-            }
-        
+            }       
     }
 }
